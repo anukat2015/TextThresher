@@ -1,3 +1,5 @@
+'use strict';
+
 export function fetchProject() {
   return (dispatch) => {
     dispatch({ type: 'FETCH_PROJECT'});

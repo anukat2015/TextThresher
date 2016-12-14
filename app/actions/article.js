@@ -1,3 +1,5 @@
+'use strict';
+
 export function fetchArticle(articleId) {
   return (dispatch) => {
     dispatch({ type: 'FETCH_ARTICLE', articleId});
@@ -32,5 +34,11 @@ export function storeArticle(article) {
     dispatch({ type: 'FETCH_ARTICLE_SUCCESS',
                response: article
             });
+  };
+}
+
+export function storeSaveAndNext(saveAndNext) {
+  return { type: 'POST_HIGHLIGHTS_CALLBACK',
+           saveAndNext: saveAndNext
   };
 }

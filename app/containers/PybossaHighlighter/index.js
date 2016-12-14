@@ -15,17 +15,17 @@ import Article from 'components/Article';
 import TopicPicker from 'components/TopicPicker';
 import Project from 'components/Project';
 
-import pybossaHighlight from 'pybossa/highlight';
+import runPybossaTasks from 'pybossa/highlight';
 
 import { styles } from './styles.scss';
 
 const mapStateToProps = state => {
   return {
     article: state.article.article,
-    currentArticle: state.article.currentArticle,
+    saveAndNext: state.article.saveAndNext,
     currentTopicId: state.topicPicker.currentTopicId,
-    nextArticle: state.article.nextArticle,
-    topics: state.topicPicker.topics
+    topics: state.topicPicker.topics,
+    highlights: state.highlight.highlights
   };
 }
 
@@ -37,30 +37,25 @@ const mapStateToProps = state => {
 export class TopicHighlighter extends Component {
   constructor(props) {
     super(props);
-    this.state = { onSaveAndNext: () => {} };
   }
 
-  saveAndNext() {
+  onSaveAndNext = () => {
+    this.props.saveAndNext(this.props.highlights);
   }
 
   componentDidMount() {
-    let onSaveAndNext = pybossaHighlight(this.props.storeArticle,
-                                             this.props.storeProject,
-                                             this.props.storeTopics);
-    this.setState({onSaveAndNext: onSaveAndNext});
+    runPybossaTasks(this.props.storeArticle,
+                    this.props.storeProject,
+                    this.props.storeTopics,
+                    this.props.storeSaveAndNext);
   }
 
   componentWillReceiveProps(nextProps) {
-//    if (this.props.currentArticle != nextProps.routeParams.articleId) {
-//    }
   }
 
   render() {
-    let current_article = this.props.currentArticle;
-    let article = this.props.article;
-//    if (this.props.nextArticle == undefined) {
-//    return (<div>DONE</div>) // TODO: Clean this up.
-//    }
+    // TODO: Detect if done
+    // return (<div>DONE</div>)
 
     let loadingClass = this.props.article.isFetching ? 'loading' : '';
 
@@ -82,15 +77,15 @@ export class TopicHighlighter extends Component {
                                       transitionEnterTimeout={500}
                                       transitionLeaveTimeout={500}>
               {<Article
-                article={article}
-                key={current_article}
+                article={this.props.article}
+                key={this.props.article.articleId}
                 topics={this.props.topics}
                 currentTopicId={this.props.currentTopicId}
                 postArticleHighlights={this.props.postArticleHighlights}
               />}
             </ReactCSSTransitionsGroup>
             <br/>
-            <button onClick={this.state.onSaveAndNext}>Save and Next</button>
+            <button onClick={this.onSaveAndNext}>Save and Next</button>
             <div className="space"></div>
         </div>
       </ReactCSSTransitionsGroup>
