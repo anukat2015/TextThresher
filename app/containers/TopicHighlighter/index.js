@@ -8,8 +8,9 @@ import { connect } from 'react-redux';
 import * as articleActionCreators from 'actions/article';
 import * as topicsActionCreators from 'actions/topicPicker';
 import * as projectActionCreators from 'actions/project';
+import * as taskActionCreators from 'actions/highlightTasks';
 
-const assembledActionCreators = Object.assign({}, articleActionCreators, topicsActionCreators, projectActionCreators)
+const assembledActionCreators = Object.assign({}, articleActionCreators, topicsActionCreators, projectActionCreators, taskActionCreators)
 
 import Article from 'components/Article';
 import TopicPicker from 'components/TopicPicker';
@@ -20,16 +21,16 @@ import { styles } from './styles.scss';
 const mapStateToProps = state => {
   return {
     article: state.article.article,
-    currentArticle: state.article.currentArticle,
+    saveAndNext: state.article.saveAndNext,
     currentTopicId: state.topicPicker.currentTopicId,
-    nextArticle: state.article.nextArticle,
-    topics: state.topicPicker.topics
+    topics: state.topicPicker.topics,
+    highlights: state.highlight.highlights
   };
 }
 
 @connect (
-    mapStateToProps,
-    dispatch => bindActionCreators(assembledActionCreators, dispatch)
+  mapStateToProps,
+  dispatch => bindActionCreators(assembledActionCreators, dispatch)
 )
 
 export class TopicHighlighter extends Component {
@@ -37,24 +38,20 @@ export class TopicHighlighter extends Component {
     super(props);
   }
 
+  onSaveAndNext = () => {
+    this.props.saveAndNext(this.props.highlights);
+  }
+
   componentDidMount() {
-    this.props.fetchArticle(this.props.routeParams.articleId);
-    this.props.fetchTopics();
-    this.props.fetchProject();
+    this.props.fetchHighlightTasks();
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.currentArticle != nextProps.routeParams.articleId && !nextProps.article.isFetching){
-      this.props.fetchArticle(nextProps.routeParams.articleId);
-    }
   }
 
   render() {
-    let current_article = this.props.currentArticle;
-    let article = this.props.article;
-    if (this.props.nextArticle == undefined) {
-      return (<div>DONE</div>) // TODO: Clean this up.
-    }
+    // TODO: Detect if done
+    // return (<div>DONE</div>)
 
     let loadingClass = this.props.article.isFetching ? 'loading' : '';
 
@@ -76,15 +73,15 @@ export class TopicHighlighter extends Component {
                                       transitionEnterTimeout={500}
                                       transitionLeaveTimeout={500}>
               {<Article
-                article={article}
-                key={current_article}
+                article={this.props.article}
+                key={this.props.article.articleId}
                 topics={this.props.topics}
                 currentTopicId={this.props.currentTopicId}
                 postArticleHighlights={this.props.postArticleHighlights}
               />}
             </ReactCSSTransitionsGroup>
             <br/>
-            <button><Link to={`/article/${this.props.nextArticle}`}>Fetch next Article</Link></button>
+            <button onClick={this.onSaveAndNext}>Save and Next</button>
             <div className="space"></div>
         </div>
       </ReactCSSTransitionsGroup>
