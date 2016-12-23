@@ -1,4 +1,4 @@
-import { TopicHighlighter } from 'containers/TopicHighlighter';
+import { TopicHighlighter } from 'components/TopicHighlighter';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
