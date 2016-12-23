@@ -24,6 +24,22 @@ function storeTasks(dispatch, pagedTasks) {
   dispatch({type: 'UPDATE_HIGHLIGHT_TASK_QUEUE', taskQueue});
 }
 
+function postArticleHighlights(highlightsString, articleId) {
+  return (dispatch) => {
+    dispatch({ type: 'POST_HIGHLIGHTS'});
+
+    return fetch(`http://localhost:5000/api/postHighlights/${articleId}`, {
+        method: 'POST',
+        body: highlightsString
+      })
+      .then(response => response.json())
+      .then(
+        (response) => dispatch({ type: 'POST_HIGHLIGHTS_SUCCESS'}, response),
+        (error) => dispatch({ type: 'POST_HIGHLIGHTS_FAIL', error})
+      );
+  };
+}
+
 function presentTask(dispatch, getState) {
   const taskReducer = getState().highlightTasks;
   const taskDB = taskReducer.taskDatabase.entities.tasks;
@@ -42,6 +58,7 @@ function presentTask(dispatch, getState) {
     function onSaveAndNext(highlights) {
       // dispatch save highight action which will return a promise, so
       // promise.then( call this ) to load next task
+      // or better, deep copy highlights and don't wait to show next task
       presentTask(dispatch, getState);
     }
     // Tricky part: We have loaded the task, now we also provide the

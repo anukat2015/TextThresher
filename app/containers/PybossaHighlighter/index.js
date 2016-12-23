@@ -11,7 +11,8 @@ import * as projectActionCreators from 'actions/project';
 
 const assembledActionCreators = Object.assign({}, articleActionCreators, topicsActionCreators, projectActionCreators)
 
-import Article from 'components/Article';
+import { colors } from 'utils/colors';
+import HighlightTool from 'components/HighlightTool';
 import TopicPicker from 'components/TopicPicker';
 import Project from 'components/Project';
 
@@ -76,13 +77,18 @@ export class TopicHighlighter extends Component {
                                       transitionAppearTimeout={500}
                                       transitionEnterTimeout={500}
                                       transitionLeaveTimeout={500}>
-              {<Article
-                article={this.props.article}
-                key={this.props.article.articleId}
-                topics={this.props.topics}
-                currentTopicId={this.props.currentTopicId}
-                postArticleHighlights={this.props.postArticleHighlights}
-              />}
+              <div className="article" key={this.props.article.articleId}>
+                <div className='article__header-text'>
+                </div>
+                <div id='article-container'>
+                  <HighlightTool
+                    text={this.props.article.text}
+                    topics={this.props.topics.results}
+                    colors={colors}
+                    currentTopicId={this.props.currentTopicId}
+                  />
+                </div>
+              </div>
             </ReactCSSTransitionsGroup>
             <br/>
             <button onClick={this.onSaveAndNext}>Save and Next</button>

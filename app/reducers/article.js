@@ -1,27 +1,12 @@
-function getInitialState() {
-  return {
+const initialState = {
     article: {
       text: ""
     },
     saveAndNext: null
-  };
-}
-
-const initialState = Object.assign({
-  article: {},
-}, getInitialState());
-
+};
 
 export function article(state = initialState, action) {
   switch (action.type) {
-    case 'FETCH_ARTICLE':
-      return {
-        ...state,
-        article: {
-          isFetching: true,
-          text: ""
-        },
-      }
     case 'FETCH_ARTICLE_SUCCESS':
       return {
         ...state,
@@ -32,8 +17,6 @@ export function article(state = initialState, action) {
         ...state,
         saveAndNext: action.saveAndNext
       }
-    case 'POST_HIGHLIGHTS':
-      return state
     default:
       return state;
   }
